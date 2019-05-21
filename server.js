@@ -14,12 +14,6 @@ MongoClient.connect(uri, (err, client) => {
     })
 })
 
-/* msg original
-app.get('/', (req, res) => {
-    res.send("Hello World")
-})
-
-*/
 
 app.use(bodyParser.urlencoded({ extended : true }))
 
@@ -54,7 +48,7 @@ app.route('/edit/:id')
 .get((req, res) => {
     let id = req.params.id
 
-    db.collection('Data').find(ObjectId(id)).toArray((err, result) => {
+    db.collection('Data').find(require('mongodb').ObjectID(id)).toArray((err, result) => {
         if (err) return res.send(err)
         res.render('edit.ejs', { data: result })
     })
@@ -64,7 +58,7 @@ app.route('/edit/:id')
     let name = req.body.name
     let surname = req.body.surname
 
-    db.collection('Data').updateOne({_id: ObjectId(id)}, {
+    db.collection('Data').updateOne({_id: require('mongodb').ObjectID(id)}, {
         $set: {
             name: name,
             surname: surname
@@ -77,17 +71,21 @@ app.route('/edit/:id')
 })
 
 app.route('/delete/:id')
-.get((req,res) => {
+.get((req, res) => {
     let id = req.params.id
 
-    db.collection('Data').deleteOne({_id: new ObjectId(id)}, (err, result) => {
+    db.collection('Data').deleteOne({_id: require('mongodb').ObjectID(id)}, (err, result) => {
         if (err) return res.send(500, err)
         console.log("User removed")
         res.redirect('/show')
     })
 })
-
-//https://medium.com/baixada-nerd/criando-um-crud-completo-com-nodejs-express-e-mongodb-parte-3-3-b243d14a403c
-//https://docs.mongodb.com/compass/master/connect/
-//https://docs.mongodb.com/manual/reference/connection-string/
-//https://cloud.mongodb.com/v2/5cdda66aff7a253a0c30ef43#clusters
+/*
+Para resolver os problemas de ObjectID não encontrado eu troquei tudo que tava "ObjectId(id)" por "require('mongodb').ObjectID(id)"
+ 
+Material base para o projeto:
+https://medium.com/baixada-nerd/criando-um-crud-completo-com-nodejs-express-e-mongodb-parte-3-3-b243d14a403c
+https://docs.mongodb.com/compass/master/connect/
+https://docs.mongodb.com/manual/reference/connection-string/
+https://stackoverflow.com/questions/22143090/error-referenceerror-objectid-is-not-defined/22145502
+*/
